@@ -17,7 +17,7 @@ class ChatViewController: UIViewController {
     var messages: [Message] = [
         Message(sender: "1@2.com", body: "guten morgen!"),
         Message(sender: "a@b.com", body: "morgen!"),
-        Message(sender: "1@2.com", body: "wie geht's?")
+        Message(sender: "1@2.com", body: "wie geht's? wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?")
     ]
     
     override func viewDidLoad() {
