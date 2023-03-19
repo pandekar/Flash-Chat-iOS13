@@ -16,7 +16,7 @@ class WelcomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         titleLabel.charInterval = 0.05
-        titleLabel.text = "⚡️FlashChat"
+        titleLabel.text = K.appName
     }
     
 
