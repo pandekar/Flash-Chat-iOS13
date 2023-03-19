@@ -8,11 +8,14 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 class ChatViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
+    
+    let db = Firestore.firestore()
     
     var messages: [Message] = [
         Message(sender: "1@2.com", body: "guten morgen!"),
@@ -32,7 +35,21 @@ class ChatViewController: UIViewController {
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
     }
     
+    //send message
     @IBAction func sendPressed(_ sender: UIButton) {
+        if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
+            db.collection(K.FStore.collectionName).addDocument(data: [
+                K.FStore.senderField : messageSender,
+                K.FStore.bodyField : messageBody
+            ]) { err in
+                if let err = err {
+                    print("error >>> \(err)")
+                } else {
+                    print("!!! SENT !!!")
+                }
+                
+            }
+        }
     }
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
@@ -46,7 +63,7 @@ class ChatViewController: UIViewController {
     }
 }
 
-//MARK: UITableViewDataSource
+//MARK: - UITableViewDataSource
 /**
  responsible to populating the tableView
  */
@@ -66,7 +83,7 @@ extension ChatViewController: UITableViewDataSource {
     }
 }
 
-//MARK: UITableViewDelegate
+//MARK: - UITableViewDelegate
 /**
  responsible for tableView interaction
  */
