@@ -17,11 +17,7 @@ class ChatViewController: UIViewController {
     
     let db = Firestore.firestore()
     
-    var messages: [Message] = [
-        Message(sender: "1@2.com", body: "guten morgen!"),
-        Message(sender: "a@b.com", body: "morgen!"),
-        Message(sender: "1@2.com", body: "wie geht's? wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?wie geht's?")
-    ]
+    var messages: [Message] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +29,34 @@ class ChatViewController: UIViewController {
         
         // register custom made cell from .xib file
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        
+        loadMessages()
+    }
+    
+    // load messages data
+    func loadMessages() {
+        messages = []
+        
+        db.collection(K.FStore.collectionName).getDocuments { querySnapshot, error in
+            if let e = error {
+                print("error >>> \(e)")
+            } else {
+                if let snapshotDocuments = querySnapshot?.documents {
+                    for doc in snapshotDocuments {
+                        let message = doc.data()
+                        if  let messageBody = message[K.FStore.bodyField] as? String, let messageSender = message[K.FStore.senderField] as? String {
+                            let newMessage = Message(sender: messageSender, body: messageBody)
+                            self.messages.append(newMessage)
+                            
+                            // reload data with async to main thread
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     //send message
@@ -52,6 +76,7 @@ class ChatViewController: UIViewController {
         }
     }
     
+    //log out
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
         let firebaseAuth = Auth.auth()
         do {
