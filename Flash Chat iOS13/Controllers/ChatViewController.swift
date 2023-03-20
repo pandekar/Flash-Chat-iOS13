@@ -54,6 +54,10 @@ class ChatViewController: UIViewController {
                             // reload data with async to main thread
                             DispatchQueue.main.async {
                                 self.tableView.reloadData()
+                                
+                                //scroll to the bottom of the screen
+                                let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+                                self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
                             }
                         }
                     }
@@ -73,9 +77,12 @@ class ChatViewController: UIViewController {
                 if let err = err {
                     print("error >>> \(err)")
                 } else {
-                    print("!!! SENT !!!")
+                    // send through main thread because we are in a closure
+                    DispatchQueue.main.async {
+                        // empty message text field
+                        self.messageTextfield.text = ""
+                    }
                 }
-                
             }
         }
     }
